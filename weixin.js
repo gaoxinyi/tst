@@ -50,8 +50,6 @@ app.get('/login.wx',(req,res)=>{
 					var p_geter = qs_param;
 					delete(p_geter.html);
 					delete(p_geter.params);
-					console.log(p_geter);
-					console.log(qs.stringify({'jsapi_ticket':value.ticket,'noncestr':qs_param.nonceStr,'timestamp':qs_param.timestamp})+'&url='+'http://tst.sku360.com.cn/pay/searchOrder.html?com=sku&'+qs.stringify(p_geter));
 					var signature = sha1(qs.stringify({'jsapi_ticket':value.ticket,'noncestr':qs_param.nonceStr,'timestamp':qs_param.timestamp})+'&url='+'http://tst.sku360.com.cn/pay/searchOrder.html?com=sku&'+qs.stringify(p_geter));
                                 	res.redirect(301,"http://wpt.tingmimi.net/source/modules/yswftstshopping/trans.html?"+geter+'#'+signature);
 				});

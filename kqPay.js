@@ -22,16 +22,19 @@ app.post('/pay.pay',(req,res)=>{
 			var param = qs.parse(decodeURIComponent(data));
 			var sign = crypto.createSign('RSA-SHA1');
 			var now = dft(new Date(),'yyyymmddHHMMss');
-			tst.order.findById(param.orderCode,(err,order)=>{
+			tst.order.update({_id:param.orderCode},{addressCode:param.addressCode},(err,result)=>{
+		    	if(err){console.log(err.stack);res.send(JSON.stringify({success:false,msg:'系统异常'}));}
+				tst.order.findById(param.orderCode,(err,order)=>{
 				if(err || order==null){res.send(JSON.stringify({success:false,msg:'订单不存在'}));return ;}
-				var pay_param = {inputCharset:1,bgUrl:'http://tst.sku360.com.cn/notice.pay',version:'mobile1.0',language:1,signType:4,merchantAcctId:'1002746126801',orderId:param.orderCode,orderAmount:order.amount,orderTime:now,productName:'TST庭秘密',payType:'00',redoFlag:1};
-                        	var qs_get = [];
-                        	for(k in pay_param){
-                                	qs_get.push([k,'=',pay_param[k]].join(''));
-                        	}
-                        	sign.update(qs_get.join('&'),'utf8');
-                        	pay_param.signMsg = sign.sign(key,'base64');
-                        	res.send(JSON.stringify({success:true,msg:qs.stringify(pay_param)}));
+					var pay_param = {inputCharset:1,bgUrl:'http://tst.sku360.com.cn/notice.pay',version:'mobile1.0',language:1,signType:4,merchantAcctId:'1002746126801',orderId:param.orderCode,orderAmount:order.amount,orderTime:now,productName:'TST庭秘密',payType:'00',redoFlag:1};
+	                var qs_get = [];
+	                for(k in pay_param){
+	                	qs_get.push([k,'=',pay_param[k]].join(''));
+	                }
+	                sign.update(qs_get.join('&'),'utf8');
+	                pay_param.signMsg = sign.sign(key,'base64');
+	                res.send(JSON.stringify({success:true,msg:qs.stringify(pay_param)}));
+				});
 			});
 		}catch(e){
 			console.log(e.stack);
