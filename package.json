@@ -1,0 +1,25 @@
+{
+  "name": "tst",
+  "version": "1.0.0",
+  "description": "tst api",
+  "main": "index.js",
+  "dependencies":{
+    "redis":"*",
+    "express":"*",
+    "mongoose":"*",
+    "async":"*",
+    "mysql":"*",
+    "sprintf-js":"*",
+    "sha1":"*",
+    "xml":"1.0.1",
+    "xml2json":"0.9.1",
+    "md5":"2.1.0",
+    "crypto":"*",
+    "dateformat":"1.0.12"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "gaoxy",
+  "license": "ISC"
+}
