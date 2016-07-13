@@ -65,7 +65,6 @@ app.get('/notice.pay',(req,res)=>{
 					payLog.save();
 					tst.order.update({_id:param.orderId},{isPay:isPay,wxPayCode:param.dealId,payTime:param.dealTime},(err,result)=>{
 		            	if(err){console.log(err.stack);}
-		                console.log('update: '+ result);
 		                res.send('<result>1</result><redirecturl>http://tstapi.sku360.com.cn/pay/result.html</redirecturl>');
 		            });
 				}catch(err){console.log(err.stack);res.send('<result>0</result><redirecturl>http://tstapi.sku360.com.cn/pay/result.html</redirecturl>');}
