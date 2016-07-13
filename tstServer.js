@@ -9,7 +9,7 @@ const tst_model = require('./model/tst');
 const conn_mb = mongoose.connect('mongodb://10.47.90.155:27017,10.25.10.136:27017/db_tst');
 
 const tst = new tst_model(conn_mb);
-const conn = redis.createClient();
+const conn = redis.createClient({host:'10.47.90.155'});
 
 conn.on('error',(err)=>{console.log('connection redis error')});
 
