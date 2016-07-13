@@ -108,7 +108,10 @@ app.post('/searchOrder.sku',(req,res)=>{
 		var param = qs.parse(decodeURIComponent(data));
 		tst.order.find({openId:param.openId},(err,result)=>{
 			if(err){res.send('{"success":false,"code":"02"}');return ;}
-			res.send(JSON.stringify({"res":result}));
+			conn.hgetall('addr_'+param.openId,(err,value)=>{
+				if(err || value == null){res.send('{"success":false,"code":"03"}');return ;}
+				res.send(JSON.stringify({success:true,address:JSON.stringify(value),res:result}));
+			});
 		});
 	});
 });
