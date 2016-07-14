@@ -86,10 +86,10 @@ app.post('/createOrder.sku',(req,res)=>{
 						res.send('{"success":false,"code":"01"}');
 					}else{
 						conn.incrby('seq_order',1,(err,seq_order)=>{
-							var coll = new tst.order({_id:seq_date+seq_order,openId:param.openId,yswfCode:param.code,goodsId:param.goodsId,total:param.total,queue:Math.round(Math.random()*4)+1,amount:(vp*param.total*0.925).toFixed(2)*100,original:(vp*param.total).toFixed(2)*100,unitprice:(vp*param.total*0.925).toFixed(2)*100});
+							var coll = new tst.order({_id:seq_date+seq_order,openId:param.openId,yswfCode:param.code.toUpperCase().trim(),goodsId:param.goodsId,total:param.total,queue:Math.round(Math.random()*4)+1,amount:(vp*param.total*0.925).toFixed(2)*100,original:(vp*param.total).toFixed(2)*100,unitprice:(vp*param.total*0.925).toFixed(2)*100});
 							try{
 								coll.save();
-                						res.send('{"success":true}');
+                				res.send('{"success":true}');
 							}catch(err){
 								console.log(err.stack);
 								conn.incrby('sku_'+param.goodsId,param.total);
