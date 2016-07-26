@@ -31,7 +31,7 @@ function kqPay(order,res){
 }
 
 function aliPay(order,res){
-	res.send(JSON.stringify({success:true,orderCode:order._id,amount:order.amount}));
+	res.send(JSON.stringify({success:true,orderCode:order._id,amount:order.amount/100}));
 }
 
 app.post('/pay.ali',(req,res)=>{
