@@ -26,7 +26,7 @@ app.get('/login.app',(req,res)=>{
                     for(var i=0;i<a.length;i++){a_num += a[i].charCodeAt();}
                     qs_param.token = timer+a_num;
 	             	geter = qs.stringify(qs_param);
-	            	res.redirect(301,"http://tstapi.sku360.com.cn/shopping2.html?"+geter);
+	            	res.redirect(301,"http://tst.sku360.com.cn/shopping2.html?"+geter);
 	            }
 			});
 		}else{
