@@ -108,23 +108,25 @@ app.post('/aliNotice.ali',(req,res)=>{
 			https.get('https://mapi.alipay.com/gateway.do?service=notify_verify&partner=2088221353228224&notify_id='+param.notify_id,(hs_res)=>{
                 hs_res.on('data',(hs_data)=>{
 					if(hs_data){
-						if(param.trade_status == 'TRADE_FINISHED'){param.payResult = true;isPay = '1';}else{param.payResult = false;isPay = '2';}
+						if(param.trade_status == 'TRADE_SUCCESS' || param.trade_status == 'WAIT_BUYER_PAY'){param.payResult = true;isPay = '1';}else{param.payResult = false;isPay = '2';}
 						param.gmt_create = dft(new Date(param.gmt_create),'yyyymmddHHMMss');
 						var payLog = new tst.payLog({wxPayCode:param.trade_no,totalFee:param.total_fee*100,orderCode:param.out_trade_no,payTime:param.gmt_create,payResult:param.payResult,payType:'alipay'});
 						try{
 							payLog.save();
 							tst.order.findById(param.out_trade_no,(err,order)=>{
 								if(err || order == null){console.log(err.stack);res.send('failure');}
-								else if(order.isPay == '1' || isPay == '2'){res.send('success');}
-								else{
+								else if(order.isPay != '1'){
+									if(order.amount != param.total_fee*100){isPay = '2'}
 									tst.order.update({_id:param.out_trade_no},{isPay:isPay,wxPayCode:param.trade_no,payTime:param.gmt_create,payType:'alipay'},(err,result)=>{
 							            if(err){console.log(err.stack);res.send('failure');return ;}
-										conn.decrby('sku_store_'+order.goodsId,order.total,(err,v)=>{
-									    	if(err){console.log(err.stack);}
-									    	res.send('success');
-								        });
+							            if(param.trade_status == 'TRADE_SUCCESS' && isPay == '1'){
+											conn.decrby('sku_store_'+order.goodsId,order.total,(err,v)=>{
+										    	if(err){console.log(err.stack);}
+										    	res.send('success');
+									        });
+									    }else{res.send('success');}
 							        });
-								}
+								}else{res.send('success');}
 							});
 						}catch(err){console.log(err.stack);res.send('failure');}
 					}else{
