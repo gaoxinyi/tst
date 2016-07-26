@@ -46,7 +46,7 @@ app.post('/pay.ali',(req,res)=>{
 						if(err || va-order.total < 0){res.send(JSON.stringify({success:false,msg:'库存不足'}));}
 						else{
 							if(param.payType == 'aliPay'){aliPay(order,res);}
-							else{kqPay(res);}
+							else{kqPay(order,res);}
 						}
 					});
 				});
