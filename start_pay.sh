@@ -1,4 +1,4 @@
-nohup node kqPay.js 8211 > kqPay.log 2>&1 &
-nohup node kqPay.js 8212 > kqPay2.log 2>&1 &
-nohup node kqPay.js 8213 > kqPay3.log 2>&1 &
-nohup node kqPay.js 8214 > kqPay4.log 2>&1 &
+nohup node aliPay.js 8211 > aliPay.log 2>&1 &
+nohup node aliPay.js 8212 > aliPay2.log 2>&1 &
+nohup node aliPay.js 8213 > aliPay3.log 2>&1 &
+nohup node aliPay.js 8214 > aliPay4.log 2>&1 &

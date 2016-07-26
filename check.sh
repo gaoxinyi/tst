@@ -34,39 +34,39 @@ then
 else
         :
 fi
-kq=`netstat -nlp | grep 8211 | awk '{print $7}' | awk -F "/" '{print $1}'`
-if test -z "$kq"
+pay=`netstat -nlp | grep 8211 | awk '{print $7}' | awk -F "/" '{print $1}'`
+if test -z "$pay"
 then
         cd /server/apps/tst
-        nohup node kqPay.js 8211 > kqPay.log 2>&1 &
-        echo " kqPay restart"
+        nohup node aliPay.js 8211 > aliPay.log 2>&1 &
+        echo " aliPay restart"
 else
         :
 fi
-kq2=`netstat -nlp | grep 8212 | awk '{print $7}' | awk -F "/" '{print $1}'`
-if test -z "$kq2"
+pay2=`netstat -nlp | grep 8212 | awk '{print $7}' | awk -F "/" '{print $1}'`
+if test -z "$pay2"
 then
         cd /server/apps/tst
-        nohup node kqPay.js 8212 > kqPay2.log 2>&1 &
-        echo " kqPay2 restart"
+        nohup node aliPay.js 8212 > aliPay2.log 2>&1 &
+        echo " aliPay2 restart"
 else
         :
 fi
-kq3=`netstat -nlp | grep 8213 | awk '{print $7}' | awk -F "/" '{print $1}'`
-if test -z "$kq3"
+pay3=`netstat -nlp | grep 8213 | awk '{print $7}' | awk -F "/" '{print $1}'`
+if test -z "$pay3"
 then
         cd /server/apps/tst
-        nohup node kqPay.js 8213 > kqPay3.log 2>&1 &
-        echo " kqPay3 restart"
+        nohup node aliPay.js 8213 > aliPay3.log 2>&1 &
+        echo " aliPay3 restart"
 else
         :
 fi
-kq4=`netstat -nlp | grep 8214 | awk '{print $7}' | awk -F "/" '{print $1}'`
-if test -z "$kq4"
+pay4=`netstat -nlp | grep 8214 | awk '{print $7}' | awk -F "/" '{print $1}'`
+if test -z "$pay4"
 then
         cd /server/apps/tst
-        nohup node kqPay.js 8214 > kqPay4.log 2>&1 &
-        echo " kqPay4 restart"
+        nohup node aliPay.js 8214 > aliPay4.log 2>&1 &
+        echo " aliPay4 restart"
 else
         :
 fi
@@ -103,6 +103,42 @@ then
         cd /server/apps/tst
         nohup node weixin.js 7996 > weixin4.log 2>&1 &
         echo " wx4 restart"
+else
+        :
+fi
+app=`netstat -nlp | grep 8313 | awk '{print $7}' | awk -F "/" '{print $1}'`
+if test -z "$app"
+then
+        cd /server/apps/tst
+        nohup node app.js 8313 > app.log 2>&1 &
+        echo " app restart"
+else
+        :
+fi
+app2=`netstat -nlp | grep 8311 | awk '{print $7}' | awk -F "/" '{print $1}'`
+if test -z "$app2"
+then
+        cd /server/apps/tst
+        nohup node app.js 8311 > app2.log 2>&1 &
+        echo " app2 restart"
+else
+        :
+fi
+app3=`netstat -nlp | grep 8312 | awk '{print $7}' | awk -F "/" '{print $1}'`
+if test -z "$app3"
+then
+        cd /server/apps/tst
+        nohup node app.js 8312 > app3.log 2>&1 &
+        echo " app3 restart"
+else
+        :
+fi
+app4=`netstat -nlp | grep 8314 | awk '{print $7}' | awk -F "/" '{print $1}'`
+if test -z "$app4"
+then
+        cd /server/apps/tst
+        nohup node app.js 8314 > app4.log 2>&1 &
+        echo " app4 restart"
 else
         :
 fi
