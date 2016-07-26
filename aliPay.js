@@ -34,7 +34,7 @@ function aliPay(order,res){
 	res.send(JSON.stringify({success:true,orderCode:order._id,amount:order.amount/100}));
 }
 
-app.post('/pay.ali',(req,res)=>{
+app.post('/pay.pay',(req,res)=>{
 	req.on('data',(data)=>{
 		try{
 			var param = qs.parse(decodeURIComponent(data));
@@ -100,7 +100,7 @@ app.get('/notice.pay',(req,res)=>{
 	}
 });
 
-app.post('/aliNotice.ali',(req,res)=>{
+app.post('/aliNotice.pay',(req,res)=>{
 	try{
 		req.on('data',(data)=>{
 			var param = qs.parse(decodeURIComponent(data));
