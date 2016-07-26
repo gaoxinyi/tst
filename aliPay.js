@@ -100,7 +100,7 @@ app.get('/notice.pay',(req,res)=>{
 	}
 });
 
-app.post('/aliNotice.ali',(res,req)=>{
+app.post('/aliNotice.ali',(req,res)=>{
 	try{
 		res.on('data',(data)=>{
 			var param = qs.parse(decodeURIComponent(data));
