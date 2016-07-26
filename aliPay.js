@@ -30,7 +30,7 @@ function kqPay(order,res){
 	res.send(JSON.stringify({success:true,msg:qs.stringify(pay_param)}));
 }
 
-function aliPay(param,order,res){
+function aliPay(order,res){
 	res.send(JSON.stringify({success:true,orderCode:order._id,amount:order.amount}));
 }
 
@@ -45,7 +45,7 @@ app.post('/pay.ali',(req,res)=>{
 					conn.get('sku_store_'+order.goodsId,(err,va)=>{
 						if(err || va-order.total < 0){res.send(JSON.stringify({success:false,msg:'库存不足'}));}
 						else{
-							if(param.payType == 'aliPay'){aliPay(res);}
+							if(param.payType == 'aliPay'){aliPay(order,res);}
 							else{kqPay(res);}
 						}
 					});
