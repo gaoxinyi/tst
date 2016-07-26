@@ -102,7 +102,7 @@ app.get('/notice.pay',(req,res)=>{
 
 app.post('/aliNotice.ali',(req,res)=>{
 	try{
-		res.on('data',(data)=>{
+		req.on('data',(data)=>{
 			var param = qs.parse(decodeURIComponent(data));
 			console.log(param);
 			https.get('https://mapi.alipay.com/gateway.do?service=notify_verify&partner=2088221353228224&notify_id='+param.notify_id,(hs_res)=>{
