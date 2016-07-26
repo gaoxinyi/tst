@@ -6,10 +6,10 @@ const dft = require('dateformat');
 const mongoose = require('mongoose');
 const tst_model = require('./model/tst');
 const redis = require('redis');
+const https = require('https');
 
 const key = fs.readFileSync('/share/key/99bill-rsa.pem');
 const key2 = fs.readFileSync('/share/key/99bill.cert.rsa.20340630.cer');
-const key3 = fs.readFileSync('/share/key/rsa_public_key.pem');
 const key_sort = ['merchantAcctId','version','language','signType','payType','bankId','orderId','orderTime','orderAmount','bindCard','bindMobile','dealId','bankDealId','dealTime','payAmount','payResult','errCode'];
 const app = express();
 const conn_mb = mongoose.connect('mongodb://10.47.90.155:27017,10.25.10.136:27017/db_tst');
@@ -105,41 +105,33 @@ app.post('/aliNotice.ali',(req,res)=>{
 		res.on('data',(data)=>{
 			var param = qs.parse(decodeURIComponent(data));
 			console.log(param);
-			var res_sign = param.sign;
-			delete param.sign;
-			delete param.sing_type;
-			var verify = crypto.createVerify('RSA-SHA1');
-			var qs_get = [];
-			var ali_key_sort = Object.keys(param);
-	        for(i in ali_key_sort){
-				var k = ali_key_sort[i];
-				qs_get.push([k,'=',param[k]].join(''));
-	        }
-			verify.update(qs_get.join('&'),'utf8');
-			var result = verify.verify(key3, res_sign, 'base64');
-			if(result){
-				if(param.trade_status == 'TRADE_FINISHED'){param.payResult = true;isPay = '1';}else{param.payResult = false;isPay = '2';}
-				param.gmt_payment = dft(new Date(param.gmt_payment),'yyyymmddHHMMss');
-				var payLog = new tst.payLog({wxPayCode:param.trade_no,totalFee:param.total_fee*100,orderCode:param.out_trade_no,payTime:param.gmt_payment,payResult:param.payResult,payType:'alipay'});
-				try{
-					payLog.save();
-					tst.order.findById(param.out_trade_no,(err,order)=>{
-						if(err || order == null){console.log(err.stack);res.send('failure');}
-						else if(order.isPay == '1' || isPay == '2'){res.send('success');}
-						else{
-							tst.order.update({_id:param.out_trade_no},{isPay:isPay,wxPayCode:param.trade_no,payTime:param.gmt_payment,payType:'alipay'},(err,result)=>{
-					            if(err){console.log(err.stack);res.send('failure');return ;}
-								conn.decrby('sku_store_'+order.goodsId,order.total,(err,v)=>{
-							    	if(err){console.log(err.stack);}
-							    	res.send('success');
-						        });
-					        });
-						}
-					});
-				}catch(err){console.log(err.stack);res.send('failure');}
-			}else{
-				res.send('failure');
-			}
+			https.get('https://mapi.alipay.com/gateway.do?service=notify_verify&partner=2088221353228224&notify_id='+param.notify_id,(hs_res)=>{
+                hs_res.on('data',(hs_data)=>{
+					if(hs_data){
+						if(param.trade_status == 'TRADE_FINISHED'){param.payResult = true;isPay = '1';}else{param.payResult = false;isPay = '2';}
+						param.gmt_payment = dft(new Date(param.gmt_payment),'yyyymmddHHMMss');
+						var payLog = new tst.payLog({wxPayCode:param.trade_no,totalFee:param.total_fee*100,orderCode:param.out_trade_no,payTime:param.gmt_payment,payResult:param.payResult,payType:'alipay'});
+						try{
+							payLog.save();
+							tst.order.findById(param.out_trade_no,(err,order)=>{
+								if(err || order == null){console.log(err.stack);res.send('failure');}
+								else if(order.isPay == '1' || isPay == '2'){res.send('success');}
+								else{
+									tst.order.update({_id:param.out_trade_no},{isPay:isPay,wxPayCode:param.trade_no,payTime:param.gmt_payment,payType:'alipay'},(err,result)=>{
+							            if(err){console.log(err.stack);res.send('failure');return ;}
+										conn.decrby('sku_store_'+order.goodsId,order.total,(err,v)=>{
+									    	if(err){console.log(err.stack);}
+									    	res.send('success');
+								        });
+							        });
+								}
+							});
+						}catch(err){console.log(err.stack);res.send('failure');}
+					}else{
+						res.send('failure');
+					}
+				});
+			});
 		});
 	}catch(e){
 		console.log(e.stack);
