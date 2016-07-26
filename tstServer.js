@@ -5,6 +5,7 @@ const redis = require('redis');
 const http = require('http');
 const mongoose = require('mongoose');
 const async = require('async');
+const dft = require('dateformat');
 const tst_model = require('./model/tst');
 const conn_mb = mongoose.connect('mongodb://10.47.90.155:27017,10.25.10.136:27017/db_tst');
 
@@ -16,7 +17,7 @@ conn.on('error',(err)=>{console.log('connection redis error')});
 app.get('/ping.sku',(req,res)=>{res.send('OK');});
 
 function check(param,next){
-	try{param.code = param.code.trim();}
+	try{param.code = param.code.toUpperCase().trim();}
 	catch(e){param.code='';}
 	async.waterfall([
 		(cb)=>{
@@ -69,8 +70,7 @@ app.post('/createOrder.sku',(req,res)=>{
                                 return ;
                         }
                 }catch(err){res.send('{"success":false,"code":"03"}');return ;}
-		var date = new Date().toJSON();
-		var seq_date = date.substring(0,4)+date.substring(5,7)+date.substring(8,10);
+		var seq_date = dft(new Date(),'yyyymmdd');
 		conn.hgetall('sale_'+seq_date,(err,value)=>{
                 if(err || value == null || value.beginTime > param.timestamp || value.endTime < param.timestamp){res.send('{"success":false,"code":"03"}');return ;}
 		conn.get('sku_'+param.goodsId,(err,va)=>{
