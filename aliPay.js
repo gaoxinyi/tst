@@ -18,6 +18,7 @@ const conn = redis.createClient({host:'10.47.90.155'});
 conn.on('error',(err)=>{console.log('connection redis error')});
 
 function kqPay(order,res){
+	var now = dft(new Date(),'yyyymmddHHMMss');
 	var sign = crypto.createSign('RSA-SHA1');
 	var pay_param = {inputCharset:1,bgUrl:'http://tst.sku360.com.cn/notice.pay',version:'mobile1.0',language:1,signType:4,merchantAcctId:'1002746126801',payerIdType:3,payerId:order.openId,orderId:order._id,orderAmount:order.amount,orderTime:now,productName:'TST庭秘密',payType:'00',redoFlag:1};
 	var qs_get = [];
@@ -37,7 +38,6 @@ app.post('/pay.ali',(req,res)=>{
 	req.on('data',(data)=>{
 		try{
 			var param = qs.parse(decodeURIComponent(data));
-			var now = dft(new Date(),'yyyymmddHHMMss');
 			tst.order.update({_id:param.orderCode},{addressCode:param.addressCode},(err,result)=>{
 		    	if(err){console.log(err.stack);res.send(JSON.stringify({success:false,msg:'系统异常'}));}
 				tst.order.findById(param.orderCode,(err,order)=>{
