@@ -79,7 +79,7 @@ app.get('/notice.pay',(req,res)=>{
 				payLog.save();
 				tst.order.findById(param.orderId,(err,order)=>{
 					if(err || order == null){console.log(err.stack);res.send('<result>0</result><redirecturl>http://tstapi.sku360.com.cn/pay/result.html</redirecturl>');}
-					else if(order.isPay == '1' || isPay = '2'){res.send('<result>1</result><redirecturl>http://tstapi.sku360.com.cn/pay/result.html</redirecturl>');}
+					else if(order.isPay == '1' || isPay == '2'){res.send('<result>1</result><redirecturl>http://tstapi.sku360.com.cn/pay/result.html</redirecturl>');}
 					else{
 						tst.order.update({_id:param.orderId},{isPay:isPay,wxPayCode:param.dealId,payTime:param.dealTime},(err,result)=>{
 				            if(err){console.log(err.stack);res.send('<result>0</result><redirecturl>http://tstapi.sku360.com.cn/pay/result.html</redirecturl>');return ;}
@@ -125,7 +125,7 @@ app.post('/aliNotice.ali',(res,req)=>{
 					payLog.save();
 					tst.order.findById(param.out_trade_no,(err,order)=>{
 						if(err || order == null){console.log(err.stack);res.send('failure');}
-						else if(order.isPay == '1' || isPay = '2'){res.send('success');}
+						else if(order.isPay == '1' || isPay == '2'){res.send('success');}
 						else{
 							tst.order.update({_id:param.out_trade_no},{isPay:isPay,wxPayCode:param.trade_no,payTime:param.gmt_payment,payType:'alipay'},(err,result)=>{
 					            if(err){console.log(err.stack);res.send('failure');return ;}
