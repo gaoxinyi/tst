@@ -107,7 +107,7 @@ app.post('/aliNotice.pay',(req,res)=>{
 			console.log(param);
 			https.get('https://mapi.alipay.com/gateway.do?service=notify_verify&partner=2088221353228224&notify_id='+param.notify_id,(hs_res)=>{
                 hs_res.on('data',(hs_data)=>{
-					if(hs_data){
+					if(hs_data.toString() == 'true'){
 						if(param.trade_status == 'WAIT_BUYER_PAY'){res.send('success'); return ;}
 						if(param.trade_status == 'TRADE_SUCCESS'){param.payResult = true;isPay = '1';}else{param.payResult = false;isPay = '2';}
 						param.gmt_create = dft(new Date(param.gmt_create),'yyyymmddHHMMss');
