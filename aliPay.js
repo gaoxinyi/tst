@@ -111,13 +111,13 @@ app.post('/aliNotice.pay',(req,res)=>{
 						if(param.trade_status == 'WAIT_BUYER_PAY'){res.send('success'); return ;}
 						if(param.trade_status == 'TRADE_SUCCESS'){param.payResult = true;isPay = '1';}else{param.payResult = false;isPay = '2';}
 						param.gmt_create = dft(new Date(param.gmt_create),'yyyymmddHHMMss');
-						var payLog = new tst.payLog({wxPayCode:param.trade_no,totalFee:param.total_fee*100,orderCode:param.out_trade_no,payTime:param.gmt_create,payResult:param.payResult,payType:'alipay'});
+						var payLog = new tst.payLog({wxPayCode:param.trade_no,totalFee:(param.total_fee*100).toFixed(0),orderCode:param.out_trade_no,payTime:param.gmt_create,payResult:param.payResult,payType:'alipay'});
 						try{
 							payLog.save();
 							tst.order.findById(param.out_trade_no,(err,order)=>{
 								if(err || order == null){console.log(err.stack);res.send('failure');}
 								else if(order.isPay != '1'){
-									if(order.amount != param.total_fee*100){isPay = '2';}
+									if(order.amount != (param.total_fee*100).toFixed(0)){isPay = '2';}
 									tst.order.update({_id:param.out_trade_no},{isPay:isPay,wxPayCode:param.trade_no,payTime:param.gmt_create,payType:'alipay'},(err,result)=>{
 							            if(err){console.log(err.stack);res.send('failure');return ;}
 							            if(isPay == '1'){
