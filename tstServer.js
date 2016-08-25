@@ -29,6 +29,7 @@ function check(param,next){
 				}else{
 					cb(null,{result:"success",jsonResponse:{store:{shopname:encodeURIComponent(res.realname),code:res.code}}});
 				}	
+			}
 		}
 	],(err,result)=>{next(result);});
 }
