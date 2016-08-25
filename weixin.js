@@ -4,8 +4,13 @@ const app = express();
 const https = require('https');
 const redis = require('redis');
 const sha1 = require('sha1');
+const mongoose = require('mongoose');
+const fx_model = require('./model/fx');
+const conn_mb = mongoose.connect('mongodb://10.47.90.155:27017,10.25.10.136:27017/db_tst');
 
 const conn = redis.createClient({host:'10.47.90.155'});
+
+const fx = new fx_model(conn_mb);
 
 app.get('/login.wx',(req,res)=>{
         var param = req.query;
@@ -40,7 +45,7 @@ app.get('/login.wx',(req,res)=>{
                                 qs_param.params = 'openid,timestamp';
                                 geter = qs.stringify(qs_param);
                                 res.redirect(301,"http://wpt.tingmimi.net/source/modules/yswftstshopping/trans.html?"+geter);
-			}else if(param.state == 'pay/searchOrder'){
+			}else if(param.state == 'openCard'){
 				qs_param.params = 'openid,timestamp,nonceStr';
 				qs_param.timestamp = Math.round(timer/1000);
 				qs_param.nonceStr = sha1(qs_param.timestamp);
@@ -50,7 +55,7 @@ app.get('/login.wx',(req,res)=>{
 					var p_geter = qs_param;
 					delete(p_geter.html);
 					delete(p_geter.params);
-					var signature = sha1(qs.stringify({'jsapi_ticket':value.ticket,'noncestr':qs_param.nonceStr,'timestamp':qs_param.timestamp})+'&url='+'http://tst.sku360.com.cn/pay/searchOrder.html?com=sku&'+qs.stringify(p_geter));
+					var signature = sha1(qs.stringify({'jsapi_ticket':value.ticket,'noncestr':qs_param.nonceStr,'timestamp':qs_param.timestamp})+'&url='+'http://tst.sku360.com.cn/openCard.html?com=sku&'+qs.stringify(p_geter));
                                 	res.redirect(301,"http://wpt.tingmimi.net/source/modules/yswftstshopping/trans.html?"+geter+'#'+signature);
 				});
                         }else{
@@ -60,6 +65,16 @@ app.get('/login.wx',(req,res)=>{
                         }
                         }catch(e){console.log(e);res.end();}
                 });
+        });
+});
+
+app.post('/openCard.wx',(req,res)=>{
+        req.on('data',(data)=>{
+                var param = qs.parse(decodeURIComponent(data));
+                // fx.user.findOne({})
+                var card = new fx.card(param);
+                card.save();
+                res.send(JSON.stringify({success:true}));
         });
 });
 
