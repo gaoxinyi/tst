@@ -7,9 +7,11 @@ const mongoose = require('mongoose');
 const async = require('async');
 const dft = require('dateformat');
 const tst_model = require('./model/tst');
+const fx_model = require('./model/fx');
 const conn_mb = mongoose.connect('mongodb://10.47.90.155:27017,10.25.10.136:27017/db_tst');
 
 const tst = new tst_model(conn_mb);
+const fx = new fx_model(conn_mb);
 const conn = redis.createClient({host:'10.47.90.155'});
 
 conn.on('error',(err)=>{console.log('connection redis error')});
@@ -21,27 +23,12 @@ function check(param,next){
 	catch(e){param.code='';}
 	async.waterfall([
 		(cb)=>{
-			conn.get(param.code,(err,reply)=>{
-				var re_value = {};
-               			try{re_value = JSON.parse(reply);}
-                		catch(e){re_value.result="failure";}
-                        	cb(null,reply,re_value);
-			});
-		},
-		(reply,re_value,cb)=>{
-			if(reply != null && re_value.result == "success"){
-				cb(null,reply);
-			}else{
-                        	var q = qs.stringify({code:param.code});
-                        	var tst_req = http.request({host:'wxs.tingmimi.net',port:80,path:'/rest/shopinfocode',method:'POST','headers':{'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8','Content-Length':q.length}},(s_res)=>{
-                                	s_res.on('data',(s_data)=>{
-                                        	if(s_data.indexOf('success')!=-1){conn.set(param.code,s_data);}
-                                        	cb(null,s_data);
-                                	});
-                        	});
-                        	tst_req.write(q);
-                        	tst_req.end();
-                	}
+			fx.user.findOne({code:param.code},(err,res)=>{
+				if(res == null){
+					cb(null,{result:"failed",jsonResponse:encodeURIComponent('抱歉，优惠码错误，请联系客服！')});
+				}else{
+					cb(null,{result:"success",jsonResponse:{store:{shopname:encodeURIComponent(res.realname),code:res.code}}});
+				}	
 		}
 	],(err,result)=>{next(result);});
 }
@@ -50,7 +37,7 @@ app.post('/shopinfocode.sku',(req,res)=>{
 	req.on('data',(data)=>{
 		var param = qs.parse(decodeURIComponent(data));
 		check(param,(result)=>{
-			res.send(result);
+			res.send(JSON.stringify(result));
 		});
 	});
 });
@@ -59,7 +46,7 @@ app.post('/createOrder.sku',(req,res)=>{
 	req.on('data',(data)=>{
 		try{var param = qs.parse(decodeURIComponent(data));}catch(e){res.send('{"success":false,"code":"03"}');}
 		check(param,(result)=>{
-		if(result.indexOf('success')==-1){res.send('{"success":false,"code":"04"}');return ;}
+		if(result.result=='failed'){res.send('{"success":false,"code":"04"}');return ;}
 		try{
                         var a = param.openId.split('');
                         var a_num = 0;
