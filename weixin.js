@@ -6,8 +6,9 @@ const redis = require('redis');
 const sha1 = require('sha1');
 const mongoose = require('mongoose');
 const fx_model = require('./model/fx');
-const conn_mb = mongoose.connect('mongodb://10.47.90.155:27017,10.25.10.136:27017/db_tst');
+const uuid = require('uuid');
 
+const conn_mb = mongoose.connect('mongodb://10.47.90.155:27017,10.25.10.136:27017/db_tst');
 const conn = redis.createClient({host:'10.47.90.155'});
 
 const fx = new fx_model(conn_mb);
@@ -72,6 +73,7 @@ app.post('/openCard.wx',(req,res)=>{
         req.on('data',(data)=>{
                 var param = qs.parse(decodeURIComponent(data));
                 // fx.user.findOne({})
+                param._id = uuid.v1();
                 var card = new fx.card(param);
                 card.save();
                 res.send(JSON.stringify({success:true}));

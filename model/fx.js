@@ -6,6 +6,19 @@ function Fx(db){
 		statu:Number,
 		activated:Number
 	},"coll_fx_code");
+
+	this.card = db.model("coll_card",{
+		_id:String,
+		code:String,
+		name:String,
+		sex:String,
+		birth_date:String,
+		address:String,
+		phone:String,
+		nationality:String,
+		card_date:String,
+		card_cmp:String
+	},"coll_card")
 };
 
 module.exports = Fx;
