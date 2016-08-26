@@ -25,7 +25,14 @@ function check(param,next){
 		(cb)=>{
 			fx.user.findOne({code:param.code},(err,res)=>{
 				if(res == null){
-					cb(null,{result:"failed",jsonResponse:encodeURIComponent('抱歉，优惠码错误，请联系客服！')});
+					var q = qs.stringify({code:param.code});
+                    var tst_req = http.request({host:'wxs.tingmimi.net',port:80,path:'/rest/shopinfocode',method:'POST','headers':{'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8','Content-Length':q.length}},(s_res)=>{
+                    	s_res.on('data',(s_data)=>{
+	                        cb(null,JSON.parse(s_data));
+                    	});
+                    });
+                    tst_req.write(q);
+                    tst_req.end();
 				}else{
 					cb(null,{result:"success",jsonResponse:{store:{shopname:encodeURIComponent(res.realname),code:res.code}}});
 				}	
