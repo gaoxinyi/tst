@@ -17,7 +17,8 @@ function Fx(db){
 		phone:String,
 		nationality:String,
 		card_date:String,
-		card_cmp:String
+		card_cmp:String,
+		imgs:String
 	},"coll_card")
 };
 
