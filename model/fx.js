@@ -16,6 +16,7 @@ function Fx(db){
 		address:String,
 		phone:String,
 		nationality:String,
+		card_no:String,
 		card_date:String,
 		card_cmp:String,
 		imgs:String
