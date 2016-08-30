@@ -86,7 +86,12 @@ app.post('/verifyCard.wx',(req,res)=>{
                 var user = {code:param.code,realname:param.name};
                 if(param.card_type == '1'){user.idcard = param.card_no;}
                 fx.user.findOne(user,(err,row)=>{
-                        if(row != null){res.send(JSON.stringify({success:true}));}
+                        if(row != null){
+                                fx.card.findOne({code:param.code},(err,row)=>{
+                                        if(row == null){res.send(JSON.stringify({success:true}));}
+                                        else{res.send(JSON.stringify({success:false}));}
+                                });
+                        }
                         else{res.send(JSON.stringify({success:false}));}
                 });
         });
