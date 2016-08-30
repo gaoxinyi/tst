@@ -80,5 +80,16 @@ app.post('/openCard.wx',(req,res)=>{
         });
 });
 
+app.post('/verifyCard.wx',(req,res)=>{
+        req.on('data',(data)=>{
+                var param = qs.parse(decodeURIComponent(data));
+                if(param.card_type == '2'){ delete param['card_type']}
+                fx.user.findOne(param,(err,res)=>{
+                        if(res != null) res.send(JSON.stringify({success:true}));
+                        else    res.send(JSON.stringify({success:false}));
+                });
+        });
+});
+
 app.listen(process.argv[2]);
 
