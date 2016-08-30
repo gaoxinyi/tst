@@ -83,10 +83,11 @@ app.post('/openCard.wx',(req,res)=>{
 app.post('/verifyCard.wx',(req,res)=>{
         req.on('data',(data)=>{
                 var param = qs.parse(decodeURIComponent(data));
-                if(param.card_type == '2'){ delete param['card_type']}
+                var user = {code:param.code,realname:param.name};
+                if(param.card_type == '1'){user.idcard = param.card_no;}
                 fx.user.findOne(param,(err,res)=>{
-                        if(res != null) res.send(JSON.stringify({success:true}));
-                        else    res.send(JSON.stringify({success:false}));
+                        if(res != null){res.send(JSON.stringify({success:true}));}
+                        else{res.send(JSON.stringify({success:false}));}
                 });
         });
 });
